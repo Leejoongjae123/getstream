@@ -54,6 +54,7 @@ const CustomMessage = () => {
               : 'bg-[#007AFF] text-black rounded-tr-full rounded-bl-full rounded-br-full'
           }`}
         >
+          
           {/* 메시지 텍스트 */}
           <div className="text-sm break-words whitespace-pre-wrap ">
             <MessageText />
