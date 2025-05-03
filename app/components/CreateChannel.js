@@ -35,21 +35,39 @@ const CreateChannel = ({ onSuccess }) => {
 
     try {
       // 현재 사용자와 선택한 상대방을 채널 멤버로 추가
-      const members = [client.userID, memberId];
+      // 객체 형식으로 변경, GetStream에서 권장하는 방식
+      const members = { [client.userID]: {}, [memberId]: {} };
+      console.log("채널 생성 - 멤버:", members);
+      
+      // 고유한 채널 ID 생성
+      const channelId = `messaging-${Math.random().toString(36).substring(2, 10)}`;
       
       // 메시징 타입의 채널 생성
-      const channel = client.channel('messaging', {
+      const channel = client.channel('messaging', channelId, {
         members,
         name: channelName,
+        created_by_id: client.userID,
       });
 
       // 채널 생성 및 첫 메시지 전송
       await channel.create();
+      console.log('채널 생성됨:', channel.id);
+      
+      // 채널 상태 확인 및 활성화
       await channel.watch();
+      console.log('채널 멤버:', channel.state.members);
+      
+      // 첫 메시지 전송
       await channel.sendMessage({
         text: '채팅방이 생성되었습니다! 대화를 시작하세요.',
+        user_id: client.userID,
+        user: {
+          id: client.userID,
+          name: client.user.name || client.userID,
+          image: client.user.image,
+        },
       });
-
+      
       setChannelName('');
       setMemberId('');
       
